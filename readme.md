@@ -4,7 +4,7 @@ background_subtraction_paper
 
 ## Team Members
 
-1. <Ashwin, add yourself here> 
+1. Ashwin, add yourself here!
 2. Nat Guy <natguy@uw.edu>
 
 ## AMATH 515 Final Project
