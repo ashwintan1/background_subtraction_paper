@@ -100,7 +100,7 @@ opts.stopCrit       = 4;
 opts.printEvery     = 1;
 opts.tol            = 1e-4;
 
-opts.maxIts         = 40;
+opts.maxIts         = 100;
 
 opts.errFcn{1}      = @(f,d,p) norm(p{1}+p{2}-X,'fro')/norm(X,'fro');
 

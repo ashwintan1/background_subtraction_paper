@@ -4,7 +4,7 @@ clear; close all; clc;
 % Load video
 input_video = 'ShoppingMallShorter.m1v';
 video_object = VideoReader(input_video);
-nFrames = 238;
+nFrames = 498;
 
 nPixels = video_object.Width * video_object.Height;
 
@@ -100,7 +100,7 @@ opts.stopCrit       = 4;
 opts.printEvery     = 1;
 opts.tol            = 1e-4;
 
-opts.maxIts         = 25;
+opts.maxIts         = 100;
 
 opts.errFcn{1}      = @(f,d,p) norm(p{1}+p{2}-X,'fro')/norm(X,'fro');
 
@@ -157,7 +157,7 @@ end % end loop over "inequality_constriants" variable
 %  The first column of both rows is the same (i.e. it is the original image).
 width = 160;
 height = 128;
-mat  = @(x) reshape(x, [width, height, 3]);
+mat  = @(x) reshape(x, [height, width, 3]);
 figure();
 colormap('Gray');
 
@@ -169,9 +169,11 @@ LL = LL / 255.0;
 LL_0 = LL_0 / 255.0;
 
 % Also, clamp to the above range, just in case there were weird errors...
-X = max(min(test, 1), 0)
-
-
+X = max(min(X, 1), 0);
+SS = max(min(SS, 1), 0);
+SS_0 = max(min(SS_0, 1), 0);
+LL = max(min(LL, 1), 0);
+LL_0 = max(min(LL_0, 1), 0);
 
 for k = 1:nFrames
     
@@ -188,6 +190,13 @@ for k = 1:nFrames
         snapnow; % Take a single still snapshot for publishing the m file to html format
     end
 end
+
+writer = VideoWriter('with_ineq_constraints_bg.avi');
+open(writer);
+for k = 1:nFrames
+   writeVideo(writer, mat(LL(:,k)));
+end
+close(writer);
 
 %% Is there a difference between the two versions?
 % Compare the equality constrained version and the inequality
@@ -207,9 +216,9 @@ s  = svd(LL);    % inequality constraints
 s0 = svd(LL_0);  % equality constraints
 
 fprintf('"L" from equality constrained version has numerical rank\t %d (of %d possible)\n',...
-    sum( s0>1e-6), min( m*n, nFrames)  );
+    sum( s0>1e-6), min( width*height, nFrames)  );
 fprintf('"L" from inequality constrained version has numerical rank\t %d (of %d possible)\n',...
-    sum( s > 1e-6), min( m*n, nFrames)  );
+    sum( s > 1e-6), min( width*height, nFrames)  );
 
 figure();
 semilogy( s0 ,'o-') 

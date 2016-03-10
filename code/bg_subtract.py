@@ -17,8 +17,8 @@ cap = cv2.VideoCapture(videoFilename)
 subtractor = cv2.createBackgroundSubtractorMOG2(detectShadows = False)
 
 # Get video output sinks
-fourcc1 = cv2.VideoWriter_fourcc(*'mp4v')
-out = cv2.VideoWriter('ShoppingMallOutput.mov', fourcc1, FPS, (160,128))
+fourcc1 = cv2.VideoWriter_fourcc(*'DIVX')
+out = cv2.VideoWriter('ShoppingMallOutput.avi', fourcc1, FPS, (160,128))
 
 frameNo = 0
 
@@ -33,13 +33,15 @@ while(cap.isOpened()):
     # Apply background subtraction to get a mask
     fgmask = subtractor.apply(frame)
 
-    cv2.imshow('Subtracted Frame', fgmask)
+    masked_frame = cv2.bitwise_and(frame, frame, mask = fgmask)
 
-    # out.write(cropped_frame)
+    cv2.imshow('Subtracted Frame', masked_frame)
+
+    out.write(masked_frame)
 
     # cv2.imshow('image', cropped_frame)
 
-    k = cv2.waitKey(int(1000.0 / FPS)) & 0xFF
+    k = cv2.waitKey(1) & 0xFF
     
     if k == 27:
         # User hit ESC
@@ -47,7 +49,6 @@ while(cap.isOpened()):
 
     frameNo += 1
 
-print frameNo+1
 
 # Release everything if job is finished
 cap.release()
